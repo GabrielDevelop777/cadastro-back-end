@@ -33,13 +33,28 @@ app.post("/usuarios", async (req, res) => {
 			return res.status(400).json({ error: "Apenas maiores de 18 anos" });
 		}
 
+		// Verificar se o email já existe antes de tentar criar
+		const existingUser = await prisma.user.findUnique({
+			where: { email }
+		});
+
+		if (existingUser) {
+			return res.status(409).json({ error: "Este email já está cadastrado!" });
+		}
+
 		const user = await prisma.user.create({
 			data: { email, age, name },
 		});
 
 		res.status(201).json(user);
 	} catch (err) {
-		res.status(500).json({ error: err.message });
+		// Tratar erro específico do Prisma para unique constraint
+		if (err.code === 'P2002') {
+			return res.status(409).json({ error: "Este email já está cadastrado!" });
+		}
+		
+		console.error("Erro interno:", err);
+		res.status(500).json({ error: "Erro interno do servidor" });
 	}
 });
 
