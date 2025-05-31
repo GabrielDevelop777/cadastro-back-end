@@ -125,5 +125,5 @@ app.delete("/usuarios/:id", async (req, res) => {
 
 // Inicializa o servidor na porta 3000
 app.listen(3000, () => {
-	console.log("Servidor rodando em http://localhost:3000");
+	console.log("Servidor rodando em https://cadastro-back-end.fly.dev");
 });
